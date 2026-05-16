@@ -1,65 +1,241 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import {
+  useEffect,
+  useState,
+} from "react";
+import BackToTop from "@/components/layout/BackToTop";
+import FloatingSidebar
+from "@/components/layout/FloatingSidebar";
+
+import Navbar
+from "@/components/layout/Navbar";
+
+import Footer
+from "@/components/layout/Footer";
+
+import Hero
+from "@/components/home/Hero";
+import AreaAvailability from"@/components/availability/AreaAvailability";
+import PopularServices
+from "@/components/home/PopularServices";
+
+import TopProviders
+from "@/components/home/TopProviders";
+
+import HowItWorks
+from "@/components/home/HowItWorks";
+
+import Testimonials
+from "@/components/home/Testimonials";
+
+import EmergencySection
+from "@/components/emergency/EmergencySection";
+
+import BookingModal
+from "@/components/booking/BookingModal";
+
+import BeforeAfterGallery
+from "@/components/before-after/BeforeAfterGallery";
+
+import BookingConfirmation
+from "@/components/booking/BookingConfirmation";
+import HelpAssistant from
+"@/components/assistant/HelpAssistant";
+import WhatsAppFloat
+from "@/components/layout/WhatsAppFloat";
+
+import { supabase }
+from "@/lib/supabase";
+import LiveNotification from "@/components/admin/LiveNotification";
+type CTASection = {
+
+  badge: string;
+
+  title: string;
+
+  highlighted_title: string;
+
+  subtitle: string;
+
+  button_text: string;
+
+  background_image: string;
+
+};
+
+export default function HomePage() {
+
+  /* SEARCH STATE */
+
+  const [searchTerm, setSearchTerm] =
+    useState("");
+
+  /* BOOKING MODAL */
+
+  const [openModal, setOpenModal] =
+    useState(false);
+
+  /* CTA DATA */
+
+  const [ctaData, setCtaData] =
+    useState<CTASection | null>(
+      null
+    );
+
+  /* FETCH CTA SECTION */
+
+  useEffect(() => {
+
+    const fetchCTA =
+      async () => {
+
+        const { data, error } =
+          await supabase
+            .from("cta_section")
+            .select("*")
+            .limit(1)
+            .single();
+
+        if (error) {
+
+          console.log(error);
+
+          return;
+        }
+
+        setCtaData(data);
+
+      };
+
+    fetchCTA();
+
+  }, []);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+
+    <main className="min-h-screen bg-base-100">
+
+      <Navbar />
+
+      {/* HERO */}
+      <Hero
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+      />
+      <AreaAvailability />
+      {/* SERVICES */}
+      <PopularServices
+        searchTerm={searchTerm}
+      />
+      
+      <TopProviders />
+      
+      <BeforeAfterGallery />
+
+      <BookingConfirmation />
+
+      <HowItWorks />
+
+      <Testimonials />
+      
+      <EmergencySection />
+
+      
+      <LiveNotification />
+      <HelpAssistant />
+      <WhatsAppFloat />
+
+      {/* BOOKING CTA */}
+      <section className="relative py-28 overflow-hidden">
+
+        {/* BACKGROUND IMAGE */}
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage:
+              `url(${ctaData?.background_image || "/cta-bg.jpg"})`,
+          }}
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+
+        {/* DARK OVERLAY */}
+        <div className="absolute inset-0 bg-slate-950/75" />
+
+        {/* BLUE GRADIENT */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-950/70 via-slate-950/60 to-cyan-950/60" />
+
+        {/* GLOW EFFECT */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[300px] bg-blue-500/10 blur-3xl rounded-full" />
+
+        {/* CONTENT */}
+        <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
+
+          {/* BADGE */}
+          <div className="inline-flex items-center px-6 py-3 rounded-full bg-blue-500/10 border border-blue-400/20 backdrop-blur-md text-blue-300 font-semibold">
+
+            {ctaData?.badge ||
+              "দ্রুত সার্ভিস বুকিং"}
+
+          </div>
+
+          {/* TITLE */}
+          <h2 className="mt-8 text-5xl md:text-7xl font-extrabold text-white leading-tight">
+
+            {ctaData?.title ||
+              "এখনই আপনার প্রয়োজনীয়"}
+
+            <br />
+
+            <span className="bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">
+
+              {ctaData?.highlighted_title ||
+                "সার্ভিস বুক করুন"}
+
+            </span>
+
+          </h2>
+
+          {/* SUBTITLE */}
+          <p className="mt-8 text-xl md:text-2xl text-slate-300 leading-relaxed">
+
+            {ctaData?.subtitle ||
+              "যাচাইকৃত এবং বিশ্বস্ত প্রোভাইডারদের থেকে দ্রুত সার্ভিস নিন সহজেই।"}
+
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+
+          {/* BUTTON */}
+          <button
+            onClick={() =>
+              setOpenModal(true)
+            }
+            className="mt-12 px-10 py-5 rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 text-white text-xl font-bold shadow-2xl hover:scale-105 transition-all duration-300"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+            {ctaData?.button_text ||
+              "সার্ভিস বুক করুন"}
+
+          </button>
+
         </div>
-      </main>
-    </div>
+
+      </section>
+      <HelpAssistant />
+      <Footer />
+      <BackToTop />
+      {/* BOOKING MODAL */}
+      <BookingModal
+        isOpen={openModal}
+        onClose={() =>
+          setOpenModal(false)
+        }
+        service={{
+          name:
+            "General Service Booking",
+        }}
+      />
+
+    </main>
+
   );
+
 }
