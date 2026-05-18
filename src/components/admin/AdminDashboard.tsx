@@ -1,36 +1,79 @@
-"use client";
+type Booking = {
+  id: number;
+  customerName: string;
+  email: string;
+  phone: string;
+  service: string;
+  status: string;
+  date: string;
+};
 
-import { useMemo, useState } from "react";
+type BookingTableProps = {
+  bookings: Booking[];
+};
 
-import BookingTable from "./BookingTable";
-import BookingSearchFilter from "./BookingSearchFilter";
-
-import { bookings } from "@/data/bookingDummy";
-
-export default function AdminDashboard() {
-  const [searchTerm, setSearchTerm] = useState("");
-
-  const filteredBookings = useMemo(() => {
-    return bookings.filter((booking) => {
-      const search = searchTerm.toLowerCase();
-
-      return (
-        booking.customerName?.toLowerCase().includes(search) ||
-        booking.email?.toLowerCase().includes(search) ||
-        booking.phone?.toLowerCase().includes(search) ||
-        booking.service?.toLowerCase().includes(search)
-      );
-    });
-  }, [searchTerm]);
-
+export default function BookingTable({
+  bookings,
+}: BookingTableProps) {
   return (
-    <div className="w-full">
-      <BookingSearchFilter
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-      />
+    <div className="overflow-x-auto rounded-xl border">
+      <table className="w-full">
+        <thead className="bg-gray-100">
+          <tr>
+            <th className="p-3 text-left">
+              Customer
+            </th>
+            <th className="p-3 text-left">
+              Email
+            </th>
+            <th className="p-3 text-left">
+              Phone
+            </th>
+            <th className="p-3 text-left">
+              Service
+            </th>
+            <th className="p-3 text-left">
+              Status
+            </th>
+            <th className="p-3 text-left">
+              Date
+            </th>
+          </tr>
+        </thead>
 
-      <BookingTable bookings={filteredBookings} />
+        <tbody>
+          {bookings.map((booking) => (
+            <tr
+              key={booking.id}
+              className="border-t"
+            >
+              <td className="p-3">
+                {booking.customerName}
+              </td>
+
+              <td className="p-3">
+                {booking.email}
+              </td>
+
+              <td className="p-3">
+                {booking.phone}
+              </td>
+
+              <td className="p-3">
+                {booking.service}
+              </td>
+
+              <td className="p-3">
+                {booking.status}
+              </td>
+
+              <td className="p-3">
+                {booking.date}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
